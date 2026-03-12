@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RARE-AI — Rare Disease Prediction</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>🧬 RARE-AI <span class="badge">Beta</span></h1>
+    <p>Machine Learning for Early Detection of Rare &amp; Hard-to-Diagnose Diseases</p>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-box"><div class="num">4,454</div><div class="lbl">Diseases in Model</div></div>
+    <div class="stat-box"><div class="num">3,549</div><div class="lbl">Symptom Features</div></div>
+    <div class="stat-box"><div class="num">4,320</div><div class="lbl">Rare Diseases</div></div>
+  </div>
+
+  <!-- ── PATIENT DETAILS CARD ── -->
+  <div class="card">
+    <h2>👤 Patient Details</h2>
+    <div class="form-grid">
+
+      <!-- Row 1 -->
+      <div class="form-group span-2">
+        <label>Patient Name</label>
+        <input type="text" id="p-name" placeholder="e.g. John Smith"/>
+      </div>
+      <div class="form-group">
+        <label>Age</label>
+        <input type="number" id="p-age" placeholder="e.g. 34" min="0" max="120"/>
+      </div>
+      <div class="form-group">
+        <label>Gender</label>
+        <select id="p-gender">
+          <option value="">Select</option>
+          <option>Male</option>
+          <option>Female</option>
+          <option>Other</option>
+          <option>Prefer not to say</option>
+        </select>
+      </div>
+
+      <!-- Row 2 -->
+      <div class="form-group">
+        <label>Blood Pressure</label>
+        <input type="text" id="p-bp" placeholder="e.g. 120/80 mmHg"/>
+      </div>
+      <div class="form-group">
+        <label>Blood Sugar (mg/dL)</label>
+        <input type="number" id="p-sugar" placeholder="e.g. 95" min="0"/>
+      </div>
+      <div class="form-group">
+        <label>Heart Rate (bpm)</label>
+        <input type="number" id="p-hr" placeholder="e.g. 72" min="0"/>
+      </div>
+      <div class="form-group">
+        <label>Temperature (°C)</label>
+        <input type="number" id="p-temp" placeholder="e.g. 37.2" step="0.1"/>
+      </div>
+
+      <!-- Row 3 -->
+      <div class="form-group">
+        <label>Weight (kg)</label>
+        <input type="number" id="p-weight" placeholder="e.g. 70" min="0"/>
+      </div>
+      <div class="form-group">
+        <label>Height (cm)</label>
+        <input type="number" id="p-height" placeholder="e.g. 175" min="0"/>
+      </div>
+      <div class="form-group">
+        <label>Oxygen Saturation (%)</label>
+        <input type="number" id="p-spo2" placeholder="e.g. 98" min="0" max="100"/>
+      </div>
+      <div class="form-group">
+        <label>Cholesterol (mg/dL)</label>
+        <input type="number" id="p-cholesterol" placeholder="e.g. 190" min="0"/>
+      </div>
+
+      <!-- Row 4 -->
+      <div class="form-group span-2">
+        <label>Known Allergies / Current Medications</label>
+        <input type="text" id="p-meds" placeholder="e.g. Penicillin allergy, taking Metformin"/>
+      </div>
+      <div class="form-group span-2">
+        <label>Family Medical History</label>
+        <input type="text" id="p-family" placeholder="e.g. Father had diabetes, mother had thyroid disorder"/>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── SYMPTOMS CARD ── -->
+  <div class="card">
+    <h2>🩺 Describe Symptoms</h2>
+
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="btn-describe" onclick="setMode('describe')">💬 Describe in your words</button>
+      <button class="mode-btn" id="btn-keywords" onclick="setMode('keywords')">🏷️ Enter keywords</button>
+    </div>
+
+    <!-- Describe Mode -->
+    <div id="mode-describe">
+      <textarea id="nlp-input"
+        placeholder="Describe symptoms in plain English...&#10;&#10;e.g. 'I have had severe knee pain and high fever for the past two days, I also feel very fatigued and have difficulty walking'"
+        rows="4"></textarea>
+      <div id="extracted-tags-section" style="display:none">
+        <small class="extracted-label">✅ Symptoms detected:</small>
+        <div class="tags-row" id="extracted-tags"></div>
+      </div>
+    </div>
+
+    <!-- Keywords Mode -->
+    <div id="mode-keywords" style="display:none">
+      <div class="input-area">
+        <input id="symptom-input" type="text"
+          placeholder="Type a symptom and press Enter or comma..."
+          autocomplete="off"/>
+      </div>
+      <div class="tags-row" id="tags-row"></div>
+    </div>
+
+    <!-- Examples -->
+    <div class="examples-section">
+      <small class="examples-label">Try an example:</small>
+      <div class="examples">
+        <button class="example-btn" onclick="loadExample('describe','I have been experiencing severe headaches, my head feels larger than normal, I have seizures and my muscles feel very stiff and spastic')">Rare — Neurological</button>
+        <button class="example-btn" onclick="loadExample('describe','I have joint pain in my knees and hips, muscle weakness, difficulty walking, and I get fatigued very easily')">Rare — Musculoskeletal</button>
+        <button class="example-btn" onclick="loadExample('keywords',['fever','cough','fatigue'])">Common — Keywords</button>
+        <button class="example-btn" onclick="loadExample('describe','I have had a skin rash with severe itching for the past week along with swollen joints')">Mixed — Dermatological</button>
+      </div>
+    </div>
+
+    <div class="slider-row">
+      <label>Top results:</label>
+      <input type="range" id="topN" min="3" max="20" value="10"
+             oninput="document.getElementById('topN-val').textContent=this.value"/>
+      <span id="topN-val">10</span>
+    </div>
+
+    <button class="predict-btn" onclick="runPrediction()">🔍 Predict Diseases</button>
+  </div>
+
+  <!-- Loader -->
+  <div class="loader" id="loader">
+    <div class="spinner"></div>
+    <p>Analyzing symptoms across 4,454 diseases...</p>
+  </div>
+
+  <!-- Results -->
+  <div id="results"></div>
+
+  <div class="warning-box">
+    ⚠️ <strong>Clinical Disclaimer:</strong> RARE-AI is a second-opinion tool designed to assist
+    clinicians — not replace them. Predictions are probabilistic and must be confirmed by a qualified
+    medical professional. Not for standalone diagnostic use.
+  </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
