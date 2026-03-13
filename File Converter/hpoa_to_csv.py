@@ -1,32 +1,32 @@
 # convert_hpoa.py
 import pandas as pd
 
-filepath = "/Users/paryejalam/Downloads/phenotype.hpoa"
+source_path = "/Users/paryejalam/Downloads/phenotype.hpoa"
 
 # Find the actual header line (first line that doesn't start with #)
-header_line = 0
-with open(filepath, "r") as f:
-    for i, line in enumerate(f):
+start_line = 0
+with open(source_path, "r") as file:
+    for idx, line in enumerate(file):
         if not line.startswith("#"):
-            header_line = i
+            start_line = idx
             break
 
-print(f"Header found at line: {header_line}")
+print(f"Header found at line: {start_line}")
 
 # Read the file skipping all comment lines
-df = pd.read_csv(
-    filepath,
+data_frame = pd.read_csv(
+    source_path,
     sep="\t",
-    skiprows=header_line,
+    skiprows=start_line,
     header=0,
     on_bad_lines="skip"   # skip any malformed lines
 )
 
-print("Columns:", df.columns.tolist())
-print(f"Rows: {len(df)}")
-print(df.head())
+print("Columns:", data_frame.columns.tolist())
+print(f"Rows: {len(data_frame)}")
+print(data_frame.head())
 
 # Save to CSV
-output_path = "/Users/paryejalam/Downloads/hpoa_phenotypes.csv"
-df.to_csv(output_path, index=False)
-print(f"\nSaved to {output_path}")
+dest_path = "/Users/paryejalam/Downloads/hpoa_phenotypes.csv"
+data_frame.to_csv(dest_path, index=False)
+print(f"\nSaved to {dest_path}")
