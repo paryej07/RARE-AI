@@ -4,7 +4,6 @@
 
 ![Python](https://img.shields.io/badge/Python-3.10-blue?logo=python)
 ![Machine Learning](https://img.shields.io/badge/Machine-Learning-orange)
-![XGBoost](https://img.shields.io/badge/Model-XGBoost-success)
 ![Flask](https://img.shields.io/badge/Flask-Web%20Application-black?logo=flask)
 ![Status](https://img.shields.io/badge/Project-Active-brightgreen)
 
